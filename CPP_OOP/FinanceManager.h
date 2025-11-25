@@ -4,14 +4,18 @@
 #include "Wallet.h"
 #include "Transaction.h"
 #include "Category.h"
+#include "ReportManager.h"
 
 class FinanceManager {
 private:
     std::vector<Wallet*> wallets;
     std::vector<Transaction> transactions;
     std::vector<Category> categories;
+    ReportManager reportManager;
 
 public:
+    void generateReports();// отдельный метод для Reports
+
     void addWallet(Wallet* wallet);
     void addTransaction(const Transaction& t);
 

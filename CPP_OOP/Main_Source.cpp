@@ -11,6 +11,7 @@ void showMenu() {
     cout << "3. Add transaction\n";
     cout << "4. Show wallets\n";
     cout << "5. Show transactions\n";
+    cout << "6. Generate Reports\n";
     cout << "0. Exit\n";
     cout << "Choose option: ";
 }
@@ -113,6 +114,12 @@ int main() {
                     << " | wallet: " << t.getWalletName() << "\n";
             }
         }
+
+        else if (choice == 6) 
+        {
+            manager.generateReports();
+        }
+
         else if (choice != 0) {
             cout << "Invalid option.\n";
         }

@@ -1,4 +1,46 @@
 ﻿#include "FinanceManager.h"
+#include <iostream>
+
+void FinanceManager::generateReports()
+{
+    int choice;
+    std::cout << "\nSelect report:\n";
+    std::cout << "1. Daily\n";
+    std::cout << "2. Weekly\n";
+    std::cout << "3. Monthly\n";
+    std::cout << "Your choice: ";
+    std::cin >> choice;
+
+    if (choice == 1)
+    {
+        std::string date;
+        std::cout << "Enter date (YYYY-MM-DD): ";
+        std::cin >> date;
+        reportManager.dailyReport(transactions, date);
+    }
+
+    else if (choice == 2)
+    {
+        std::string endDate;
+        std::cout << "Enter end date (YYYY-MM-DD): ";
+        std::cin >> endDate;
+        reportManager.weeklyReport(transactions, endDate);
+    }
+
+    else if (choice == 3)
+    {
+        std::string monthPrefix;
+        std::cout << "Enter month (YYYY-MM): ";
+        std::cin >> monthPrefix;
+        reportManager.monthlyReport(transactions, monthPrefix);
+    }
+
+    else
+    {
+        std::cout << "Invalid choice.\n";
+    }
+}
+
 
 void FinanceManager::addWallet(Wallet* wallet) {
     wallets.push_back(wallet);

@@ -5,10 +5,12 @@ void FinanceManager::addWallet(Wallet* wallet) {
 }
 
 void FinanceManager::addTransaction(const Transaction& t) {
+
     transactions.push_back(t);
 }
 
-Wallet* FinanceManager::findWalletByName(const std::string& name) {
+Wallet* FinanceManager::findWalletByName(const std::string& name) 
+{
     for (auto* w : wallets)
         if (w->getName() == name)
             return w;

@@ -123,7 +123,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Category.cpp" />
+    <ClCompile Include="FinanceManager.cpp" />
     <ClCompile Include="Main_Source.cpp" />
+    <ClCompile Include="ReportManager.cpp" />
+    <ClCompile Include="Transaction.cpp" />
+    <ClCompile Include="Wallet.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Category.h" />
+    <ClInclude Include="FinanceManager.h" />
+    <ClInclude Include="ReportManager.h" />
+    <ClInclude Include="Transaction.h" />
+    <ClInclude Include="Wallet.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

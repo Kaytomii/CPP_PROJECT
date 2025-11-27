@@ -1,7 +1,7 @@
 ﻿#include "Wallet.h"
 #include<iostream>
-Wallet::Wallet(const std::string& name, const std::string& type, double balance)
-    : name(name), type(type), balance(balance) {
+Wallet::Wallet(const std::string& name, const std::string& type, double balance, int id)
+    : name(name), type(type), balance(balance),id(id) {
 }
 
 void Wallet::addMoney(double sum) {
@@ -27,11 +27,11 @@ std::string Wallet::getType() const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Wallet& w) {
-    os << w.name << " " << w.type << " " << w.balance;
+    os << w.id << " " << w.name << " " << w.type << " " << w.balance;
     return os;
 }
 
 std::istream& operator>>(std::istream& is, Wallet& w) {
-    is >> w.name >> w.type >> w.balance;
+    is >>w.id >> w.name >> w.type >> w.balance;
     return is;
 }

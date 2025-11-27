@@ -51,8 +51,10 @@ int main() {
             cout << "Initial balance: ";
             cin >> balance;
 
-            manager.addWallet(new Wallet(name, type, balance));
-            cout << "Wallet added.\n";
+            int newId = manager.getWallets().size() > 0 ? manager.getWallets().back()->getId() + 1 : 1;
+
+            manager.addWallet(new Wallet(name, type, balance, newId));
+            cout << "Wallet added with ID " << newId << ".\n";
             system("pause");
         }
         else if (choice == 2) {
@@ -80,18 +82,20 @@ int main() {
         else if (choice == 3) {
             system("cls");
             cout << "----- Add transaction -----\n";
-            string walletName, category, date;
+            manager.displayWallets();
+            int walletId;
+            string  category, date;
             double amount;
             int type;
 
-            cout << "Wallet name: ";
-            cin >> walletName;
+            cout << "Wallet ID: ";
+            cin >> walletId;
 
-            Wallet* w = manager.findWalletByName(walletName);
+            Wallet* w = manager.findWalletById(walletId);
             if (!w) {
                 cout << "Wallet not found.\n";
                 continue;
-            }
+            }  
 
             cout << "Category: ";
             cin >> category;
@@ -113,7 +117,8 @@ int main() {
             }
             if (income) w->addMoney(amount);
 
-            manager.addTransaction(Transaction(amount, category, date, walletName, income));
+            // Передаємо walletId замість walletName у транзакцію
+            manager.addTransaction(Transaction(amount, category, date, walletId, income));
             manager.findOrCreateCategory(category)->addExpense(income ? 0 : amount);
 
             cout << "Transaction added.\n";
@@ -121,23 +126,12 @@ int main() {
         }
         else if (choice == 4) {
             system("cls");
-            cout << "\n--- Show Wallets ---\n";
-            for (auto w : manager.getWallets()) {
-                cout << w->getName() << " | " << w->getType()
-                    << " | balance: " << w->getBalance() << "\n";
-            }
+            manager.displayWallets();
         }
         else if (choice == 5) {
             system("cls");
-            cout << "\n--- Show Transactions ---\n";
-            for (auto& t : manager.getTransactions()) {
-                cout << (t.isIncome() ? "[Income] " : "[Expense] ")
-                    << t.getAmount() << " | category: " << t.getCategory()
-                    << " | date: " << t.getDate()
-                    << " | wallet: " << t.getWalletName() << "\n";
-            }
+            manager.displayTransactions();
         }
-
         else if (choice == 6) 
         {
             system("cls");
@@ -174,3 +168,4 @@ int main() {
     cout << "Exit.\n";
     return 0;
 }
+

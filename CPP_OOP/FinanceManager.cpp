@@ -54,7 +54,16 @@ void FinanceManager::addTransaction(const Transaction& t) {
     transactions.push_back(t);
 }
 
-Wallet* FinanceManager::findWalletByName(const std::string& name) 
+Wallet* FinanceManager::findWalletById(int id) const {
+    for (auto* w : wallets) {
+        if (w->getId() == id) {
+            return w;
+        }
+    }
+    return nullptr;
+}
+
+Wallet* FinanceManager::findWalletByName(const std::string& name) const
 {
     for (auto* w : wallets)
         if (w->getName() == name)
@@ -207,8 +216,9 @@ void FinanceManager::saveToFile(const std::string& filename) {
 
 void FinanceManager::loadFromFile(const std::string& filename) {
     std::ifstream inFile(filename);
+
     if (!inFile.is_open()) {
-        std::cerr << "Error: Could not open file " << filename << " for reading.\n";
+        std::cout << "Info: No previous data file found or could not open " << filename << ".\n";
         return;
     }
 
@@ -219,20 +229,28 @@ void FinanceManager::loadFromFile(const std::string& filename) {
     categories.clear();
 
     size_t count;
+    int maxId = 0;
 
     // Зчитуємо гаманці
     inFile >> count;
+    if (!(inFile >> count)) { /* ... error handling ... */ }
     for (size_t i = 0; i < count; ++i) {
-        Wallet* w = new Wallet("", "", 0.0); // Створюємо тимчасовий об'єкт
-        inFile >> *w; // Використовуємо оператор >>
+        Wallet* w = new Wallet("", "", 0.0, 0);
+        inFile >> *w;
         wallets.push_back(w);
+        if (w->getId() > maxId) maxId = w->getId();
     }
+    nextWalletId = maxId + 1; // Оновлюємо наступний доступний ID
 
     // Зчитуємо транзакції
-    inFile >> count;
+    if (!(inFile >> count)) { // Додана перевірка на успішність читання
+        std::cerr << "Error: Corrupted file format for transactions.\n";
+        inFile.close();
+        return;
+    }
     for (size_t i = 0; i < count; ++i) {
-        Transaction t(0.0, "", "", "", false); // Створюємо тимчасовий об'єкт
-        inFile >> t; // Використовуємо оператор >>
+        Transaction t(0.0, "", "", 0, false);
+        inFile >> t;
         transactions.push_back(t);
         // Відновлюємо категорії
         findOrCreateCategory(t.getCategory())->addExpense(t.isIncome() ? 0 : t.getAmount());
@@ -242,3 +260,36 @@ void FinanceManager::loadFromFile(const std::string& filename) {
     std::cout << "Data successfully loaded from " << filename << ".\n";
 }
 
+void FinanceManager::displayWallets()const
+{
+    std::cout << "\n--- Show Wallets ---\n";
+    if (wallets.empty()) {
+        std::cout << "No wallets found.\n";
+        return;
+    }
+    for (const auto* w : wallets) {
+        std::cout << "ID: " << w->getId() << " | " << w->getName() << " | " << w->getType()
+            << " | balance: " << w->getBalance() << "\n";
+    }
+}
+
+void FinanceManager::displayTransactions() const {
+    std::cout << "\n--- Transactions ---\n";
+    if (transactions.empty()) {
+        std::cout << "No transactions found.\n";
+        return;
+    }
+
+    for (const auto& t : transactions) {
+        // Чтобы показать имя кошелька, ищем его по ID внутри менеджера
+        Wallet* w = findWalletById(t.getWalletId());
+        std::string walletName = w ? w->getName() : "Unknown";
+
+        // Форматированный вывод
+        std::cout << "Wallet ID: " << t.getWalletId() << " | "
+            << (t.isIncome() ? "[Income] " : "[Expense] ")
+            << t.getAmount() << " | category: " << t.getCategory()
+            << " | date: " << t.getDate()
+            << " | wallet: " << walletName << "\n";
+    }
+}

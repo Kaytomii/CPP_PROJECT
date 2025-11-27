@@ -16,4 +16,9 @@ public:
     double getBalance() const;
     std::string getName() const;
     std::string getType() const;
+    friend std::ostream& operator<<(std::ostream& os, const Wallet& w);
+    friend std::istream& operator>>(std::istream& is, Wallet& w);
 };
+
+std::ostream& operator<<(std::ostream& os, const Wallet& w);
+std::istream& operator>>(std::istream& is, Wallet& w);

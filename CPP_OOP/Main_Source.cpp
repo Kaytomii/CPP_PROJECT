@@ -1,7 +1,7 @@
 ﻿#include <iostream>
 #include <string>
 #include "FinanceManager.h"
-
+#include "Wallet.h"
 using namespace std;
 
 void showMenu() {
@@ -11,7 +11,10 @@ void showMenu() {
     cout << "3. Add transaction\n";
     cout << "4. Show wallets\n";
     cout << "5. Show transactions\n";
-    cout << "6. Generate Reports\n";
+    cout << "6. Generate Reports (daily/weekly/monthly)\n";
+    cout << "7. Show Top-3 rankings (expenses/categories)\n";
+    cout << "8. Save data to file\n";
+    cout << "9. Load data from file\n";
     cout << "0. Exit\n";
     cout << "Choose option: ";
 }
@@ -20,11 +23,22 @@ int main() {
     FinanceManager manager;
     int choice = -1;
 
+    // Автоматичне завантаження при запуску (опційно)
+    manager.loadFromFile("finance_data.txt"); 
+
     while (choice != 0) {
         showMenu();
-        cin >> choice;
+       
+        if (!(cin >> choice)) { // Обробка помилок вводу
+            cout << "Invalid input. Please enter a number.\n";
+            cin.clear(); // Очищаємо прапор помилки
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Пропускаємо рядок з помилкою
+            continue;
+        }
 
         if (choice == 1) {
+            system("cls");
+            cout << "----- Add wallet -----\n";
             string name, type;
             double balance;
 
@@ -39,8 +53,11 @@ int main() {
 
             manager.addWallet(new Wallet(name, type, balance));
             cout << "Wallet added.\n";
+            system("pause");
         }
         else if (choice == 2) {
+            system("cls");
+            cout << "----- Deposit money -----\n";
             string name;
             double sum;
 
@@ -58,8 +75,11 @@ int main() {
 
             w->addMoney(sum);
             cout << "Money deposited.\n";
+            system("pause");
         }
         else if (choice == 3) {
+            system("cls");
+            cout << "----- Add transaction -----\n";
             string walletName, category, date;
             double amount;
             int type;
@@ -97,16 +117,19 @@ int main() {
             manager.findOrCreateCategory(category)->addExpense(income ? 0 : amount);
 
             cout << "Transaction added.\n";
+            system("pause");
         }
         else if (choice == 4) {
-            cout << "\n--- Wallets ---\n";
+            system("cls");
+            cout << "\n--- Show Wallets ---\n";
             for (auto w : manager.getWallets()) {
                 cout << w->getName() << " | " << w->getType()
                     << " | balance: " << w->getBalance() << "\n";
             }
         }
         else if (choice == 5) {
-            cout << "\n--- Transactions ---\n";
+            system("cls");
+            cout << "\n--- Show Transactions ---\n";
             for (auto& t : manager.getTransactions()) {
                 cout << (t.isIncome() ? "[Income] " : "[Expense] ")
                     << t.getAmount() << " | category: " << t.getCategory()
@@ -117,13 +140,36 @@ int main() {
 
         else if (choice == 6) 
         {
+            system("cls");
             manager.generateReports();
+            system("pause");
+        }
+
+        else if (choice == 7) {
+            system("cls");
+            manager.showTopExpensesAndCategoriesMenu();
+            system("pause");
+        }
+        else if (choice == 8) {
+            system("cls");
+            manager.saveToFile("finance_data.txt");
+            system("pause");
+        }
+        else if (choice == 9) {
+            system("cls");
+            manager.loadFromFile("finance_data.txt");
+            system("pause");
         }
 
         else if (choice != 0) {
             cout << "Invalid option.\n";
         }
+        
+            
     }
+
+    // Автоматичне збереження при виході 
+    manager.saveToFile("finance_data.txt");
 
     cout << "Exit.\n";
     return 0;

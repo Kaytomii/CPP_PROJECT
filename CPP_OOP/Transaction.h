@@ -18,4 +18,8 @@ public:
     std::string getDate() const;
     std::string getWalletName() const;
     bool isIncome() const;
+    friend std::ostream& operator<<(std::ostream& os, const Transaction& t);
+    friend std::istream& operator>>(std::istream& is, Transaction& t);
 };
+std::ostream& operator<<(std::ostream& os, const Transaction& t);
+std::istream& operator>>(std::istream& is, Transaction& t);
